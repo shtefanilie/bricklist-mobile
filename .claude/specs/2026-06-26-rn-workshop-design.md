@@ -108,18 +108,19 @@ Data comes from Rebrickable's downloadable CSV bundle for this non-commercial
 workshop. The Worker serves set metadata and Rebrickable image URLs; it does
 not host copied image assets.
 
-Attendees/facilitators manually download and extract the bundle. The ignored
-`data/raw/` directory contains:
+Before the workshop, the facilitator manually downloads and extracts the bundle.
+The ignored `data/raw/` directory contains:
 
 ```text
 data/raw/sets.csv
 data/raw/themes.csv
 ```
 
-The repository supplies a repeatable importer and D1 migration. Raw input is
-never committed. The D1 schema keeps only exercise fields: set identifier,
-name, resolved theme name, year, piece count, and image URL, with indexes for
-identifier, theme, and search.
+The repository supplies a repeatable importer and D1 migration for facilitator
+use. Raw input is never committed. Attendees only consume the already deployed
+API. The D1 schema keeps only exercise fields: set identifier, name, resolved
+theme name, year, piece count, and image URL, with indexes for identifier,
+theme, and search.
 
 ### Shared Key and Teardown
 
