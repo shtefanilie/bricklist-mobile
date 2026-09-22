@@ -38,3 +38,25 @@ test.each([" DELETE_BRICKLIST_WORKSHOP\n", "DELETE_BRICKLIST_WORKSHOP \n"])(
     rmSync(bin, { force: true, recursive: true });
   },
 );
+
+test("accepts the exact confirmation followed by one terminal newline", () => {
+  const bin = mkdtempSync(join(tmpdir(), "bricklist-teardown-"));
+  const invoked = join(bin, "invoked");
+  const npx = join(bin, "npx");
+  writeFileSync(npx, `#!/bin/sh\nprintf '%s\\n' "$*" >> "${invoked}"\n`);
+  chmodSync(npx, 0o755);
+
+  const output = execFileSync("npm", ["run", "teardown"], {
+    cwd: root,
+    encoding: "utf8",
+    env: { ...process.env, PATH: `${bin}:${process.env.PATH}` },
+    input: "DELETE_BRICKLIST_WORKSHOP\n",
+  });
+
+  expect(output).not.toContain("Teardown cancelled");
+  expect(readFileSync(invoked, "utf8")).toBe(
+    "wrangler delete --name bricklist-workshop\nwrangler d1 delete bricklist-workshop\n",
+  );
+
+  rmSync(bin, { force: true, recursive: true });
+});
