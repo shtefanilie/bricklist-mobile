@@ -1,98 +1,102 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Button, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { fetchSets } from '@/api';
+import type { PaginatedSets } from '@/types';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+type FetchState = 'idle' | 'loading' | 'success' | 'empty' | 'error';
 
 export default function HomeScreen() {
+  const [page, setPage] = useState(1);
+  const [retryCount, setRetryCount] = useState(0);
+  const [state, setState] = useState<FetchState>('idle');
+  const [data, setData] = useState<PaginatedSets | null>(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadSets() {
+      setState('loading');
+      setError('');
+
+      try {
+        const response = await fetchSets(page, controller.signal);
+        if (controller.signal.aborted) return;
+
+        setData(response);
+        setState(response.items.length === 0 ? 'empty' : 'success');
+      } catch (caughtError) {
+        if (controller.signal.aborted) return;
+
+        setData(null);
+        setError(caughtError instanceof Error ? caughtError.message : 'Request failed');
+        setState('error');
+      }
+    }
+
+    void loadSets();
+    return () => controller.abort();
+  }, [page, retryCount]);
+
+  const canGoPrevious = page > 1;
+  const canGoNext = data !== null && data.page * data.limit < data.total;
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.title}>BrickList</Text>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+        {state === 'loading' && <Text>Loading sets…</Text>}
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        {(state === 'success' || state === 'empty') && data && (
+          <>
+            {state === 'empty' ? (
+              <Text>No sets found.</Text>
+            ) : (
+              data.items.map((set) => (
+                <View key={set.setNumber} style={styles.setCard}>
+                  <Image
+                    accessibilityLabel={`${set.name} image`}
+                    source={{ uri: set.imageUrl }}
+                    style={styles.image}
+                  />
+                  <Text>{set.setNumber}</Text>
+                  <Text style={styles.setName}>{set.name}</Text>
+                  <Text>{set.theme}</Text>
+                  <Text>{set.year}</Text>
+                  <Text>{set.pieceCount} pieces</Text>
+                </View>
+              ))
+            )}
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+            <View style={styles.pagination}>
+              <Button disabled={!canGoPrevious} onPress={() => setPage((current) => current - 1)} title="Previous" />
+              <Text>Page {data.page}</Text>
+              <Button disabled={!canGoNext} onPress={() => setPage((current) => current + 1)} title="Next" />
+            </View>
+          </>
+        )}
+
+        {state === 'error' && (
+          <View style={styles.error}>
+            <Text>Could not load sets: {error}</Text>
+            <Button onPress={() => setRetryCount((count) => count + 1)} title="Retry" />
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
+  safeArea: { flex: 1 },
+  content: { gap: 16, padding: 16 },
+  title: { fontSize: 28, fontWeight: '700' },
+  setCard: { gap: 4, borderColor: '#d1d5db', borderWidth: 1, borderRadius: 8, padding: 12 },
+  image: { width: '100%', height: 180, resizeMode: 'contain' },
+  setName: { fontWeight: '600' },
+  pagination: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+  error: { gap: 12 },
 });
