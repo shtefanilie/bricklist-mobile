@@ -1,7 +1,7 @@
 import { env, SELF } from "cloudflare:test";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-import worker, { jsonError } from "../src/index";
+import worker from "../src/index";
 
 const keyed = {
   headers: { "X-API-Key": "workshop-key" },
@@ -198,11 +198,22 @@ describe("Worker API", () => {
     });
   });
 
-  it("formats rate-limit errors with the stable error contract", async () => {
-    const response = jsonError(429, "rate_limited", "Too many requests");
+  it("rate limits a keyed endpoint request with the standard error body", async () => {
+    const rateLimitedEnv = { ...env, RATE_LIMIT_MAX_REQUESTS: "1" };
+    const first = await worker.fetch(
+      new Request("https://example.test/sets", keyed),
+      rateLimitedEnv,
+      {} as ExecutionContext,
+    );
+    const second = await worker.fetch(
+      new Request("https://example.test/sets", keyed),
+      rateLimitedEnv,
+      {} as ExecutionContext,
+    );
 
-    expect(response.status).toBe(429);
-    await expect(response.json()).resolves.toEqual({
+    expect(first.status).toBe(200);
+    expect(second.status).toBe(429);
+    await expect(second.json()).resolves.toEqual({
       error: { code: "rate_limited", message: "Too many requests" },
     });
   });
