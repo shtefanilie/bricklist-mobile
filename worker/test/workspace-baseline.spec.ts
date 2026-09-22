@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { expect, test } from "vitest";
 
 const root = resolve(import.meta.dirname, "../..");
@@ -12,15 +13,28 @@ test("provides an attendee configuration template with public API variables", ()
   expect(template).toContain("EXPO_PUBLIC_WORKSHOP_API_KEY=");
 });
 
-test("stops teardown before destructive commands without the exact confirmation", () => {
-  const output = execFileSync("npm", ["run", "teardown"], {
-    cwd: root,
-    encoding: "utf8",
-    input: "no\n",
-  });
+test.each([" DELETE_BRICKLIST_WORKSHOP\n", "DELETE_BRICKLIST_WORKSHOP \n"])(
+  "rejects whitespace-padded teardown confirmation %j",
+  (input) => {
+    const bin = mkdtempSync(join(tmpdir(), "bricklist-teardown-"));
+    const invoked = join(bin, "invoked");
+    const npx = join(bin, "npx");
+    writeFileSync(npx, `#!/bin/sh\nprintf '%s\\n' "$*" >> "${invoked}"\n`);
+    chmodSync(npx, 0o755);
 
-  expect(output).toContain("Worker to delete: bricklist-workshop");
-  expect(output).toContain("D1 database to delete: bricklist-workshop");
-  expect(output).toContain("Type DELETE_BRICKLIST_WORKSHOP to continue:");
-  expect(output).toContain("Teardown cancelled. No resources were deleted.");
-});
+    const output = execFileSync("npm", ["run", "teardown"], {
+      cwd: root,
+      encoding: "utf8",
+      env: { ...process.env, PATH: `${bin}:${process.env.PATH}` },
+      input,
+    });
+
+    expect(output).toContain("Worker to delete: bricklist-workshop");
+    expect(output).toContain("D1 database to delete: bricklist-workshop");
+    expect(output).toContain("Type DELETE_BRICKLIST_WORKSHOP to continue:");
+    expect(output).toContain("Teardown cancelled. No resources were deleted.");
+    expect(() => readFileSync(invoked, "utf8")).toThrow();
+
+    rmSync(bin, { force: true, recursive: true });
+  },
+);

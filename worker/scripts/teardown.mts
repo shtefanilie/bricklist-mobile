@@ -5,7 +5,8 @@ console.log("Worker to delete: bricklist-workshop");
 console.log("D1 database to delete: bricklist-workshop");
 process.stdout.write("Type DELETE_BRICKLIST_WORKSHOP to continue:");
 
-if (readFileSync(0, "utf8").trim() !== "DELETE_BRICKLIST_WORKSHOP") {
+const confirmation = readFileSync(0, "utf8").replace(/\r?\n$/, "");
+if (confirmation !== "DELETE_BRICKLIST_WORKSHOP") {
   console.log("\nTeardown cancelled. No resources were deleted.");
   process.exit(0);
 }
