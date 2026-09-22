@@ -61,4 +61,27 @@ VALUES ('001-1', 'Builder''s Gears', 'Technic', 1965, 43, 'https://cdn.example/0
 COMMIT;
 `);
   });
+
+  it("splits seed SQL into transactions of at most 500 values", () => {
+    const makeRows = (count: number) =>
+      Array.from({ length: count }, (_, index) => ({
+        setNumber: `${index}-1`,
+        name: `Set ${index}`,
+        year: 2000,
+        theme: "Technic",
+        pieceCount: index,
+        imageUrl: `https://cdn.example/${index}-1.jpg`,
+      }));
+    const transactions = (rows: ReturnType<typeof makeRows>) =>
+      buildSeedSql(rows)
+        .split("COMMIT;")
+        .filter((transaction) => transaction.trim() !== "");
+    const valueCount = (transaction: string) =>
+      transaction.slice(transaction.indexOf("VALUES ") + "VALUES ".length).match(/\(/g)?.length;
+
+    expect(transactions(makeRows(500))).toHaveLength(1);
+    expect(valueCount(transactions(makeRows(500))[0])).toBe(500);
+    expect(transactions(makeRows(501))).toHaveLength(2);
+    expect(transactions(makeRows(501)).map(valueCount)).toEqual([500, 1]);
+  });
 });
