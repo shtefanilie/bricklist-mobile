@@ -12,12 +12,15 @@ test("provides an attendee configuration template with public API variables", ()
   expect(template).toContain("EXPO_PUBLIC_WORKSHOP_API_KEY=");
 });
 
-test("runs a non-destructive temporary teardown", () => {
+test("stops teardown before destructive commands without the exact confirmation", () => {
   const output = execFileSync("npm", ["run", "teardown"], {
     cwd: root,
     encoding: "utf8",
+    input: "no\n",
   });
 
-  expect(output).toContain("Teardown is not available yet");
-  expect(output).not.toMatch(/wrangler.*delete/i);
+  expect(output).toContain("Worker to delete: bricklist-workshop");
+  expect(output).toContain("D1 database to delete: bricklist-workshop");
+  expect(output).toContain("Type DELETE_BRICKLIST_WORKSHOP to continue:");
+  expect(output).toContain("Teardown cancelled. No resources were deleted.");
 });
