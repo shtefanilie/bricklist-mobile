@@ -6,6 +6,8 @@
   "scripts": {
     "test": "vitest run --passWithNoTests",
     "dev": "wrangler dev",
+    "import:data": "tsx scripts/import-rebrickable.mts",
+    "d1:import": "npx wrangler d1 migrations apply bricklist-workshop --local && npx wrangler d1 execute bricklist-workshop --local --file=generated/seed-sets.sql",
     "teardown": "tsx scripts/teardown.mts"
   },
   "devDependencies": {
