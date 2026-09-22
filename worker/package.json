@@ -1,0 +1,20 @@
+{
+  "name": "@bricklist/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run --passWithNoTests --config vitest.config.ts && vitest run --passWithNoTests --config vitest.node.config.ts",
+    "dev": "wrangler dev",
+    "import:data": "tsx scripts/import-rebrickable.mts",
+    "d1:import": "npx wrangler d1 migrations apply bricklist-workshop --local && npx wrangler d1 execute bricklist-workshop --local --file=generated/seed-sets.sql",
+    "teardown": "tsx scripts/teardown.mts"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.10.15",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4",
+    "wrangler": "4.54.0"
+  }
+}

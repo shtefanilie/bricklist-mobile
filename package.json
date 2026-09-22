@@ -1,0 +1,14 @@
+{
+  "name": "bricklist-workshop",
+  "private": true,
+  "workspaces": ["app", "worker"],
+  "overrides": {
+    "react": "19.2.3"
+  },
+  "scripts": {
+    "worker:test": "npm run test --workspace=@bricklist/worker",
+    "worker:dev": "npm run dev --workspace=@bricklist/worker",
+    "app:start": "npm run start --workspace=@bricklist/app",
+    "teardown": "npm run teardown --workspace=@bricklist/worker"
+  }
+}
