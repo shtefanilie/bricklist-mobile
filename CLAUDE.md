@@ -1,0 +1,1 @@
+For React Native workshop readiness, use the Frankie agent instructions in `FRANKIE.md`. Read that file before assessing or changing the attendee environment. Follow its consent and safety boundaries exactly.
