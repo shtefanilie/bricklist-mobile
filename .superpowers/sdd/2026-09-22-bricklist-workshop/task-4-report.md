@@ -58,3 +58,11 @@ Existing Task 4 configuration/documentation already matched requirements and was
 - Tests pass but emit React test-renderer `act(...)` environment warnings.
 - Typecheck and lint remain blocked by pre-existing template/Expo CLI setup issues described above.
 - Expo Metro started successfully, but the fixed command timeout prevented confirming the QR code.
+
+## Fix Round 1: Lockfile Regeneration
+
+- Added root npm overrides for `react` and `react-dom` at `19.2.3`, matching Expo SDK 57's declared React version and Jest Expo's renderer version.
+- Regenerated `package-lock.json` after deleting stale lockfile and dependency directories. The regenerated lockfile contains Jest `29.7.0` and no ESLint package records.
+- `npm ci --ignore-scripts` succeeded from the clean dependency state: `added 996 packages` and `audited 999 packages`.
+- `npm run test --workspace=@bricklist/app -- --runInBand --no-watchman` passed: `Test Suites: 2 passed, 2 total`; `Tests: 8 passed, 8 total`.
+- React `act(...)` warnings still print during screen tests but do not fail the suite.
