@@ -49,20 +49,18 @@ describe("Rebrickable import", () => {
     expect(() => buildSetRows(input, themesCsv)).toThrow("sets header");
   });
 
-  it("escapes SQL strings and wraps inserts in a transaction", () => {
+  it("escapes SQL strings without nested transactions", () => {
     const rows = buildSetRows(
       setsCsv.replace("Gears", "Builder's Gears"),
       themesCsv,
     );
 
-    expect(buildSeedSql(rows)).toBe(`BEGIN TRANSACTION;
-INSERT OR REPLACE INTO sets (set_number, name, theme, year, piece_count, image_url)
+    expect(buildSeedSql(rows)).toBe(`INSERT OR REPLACE INTO sets (set_number, name, theme, year, piece_count, image_url)
 VALUES ('001-1', 'Builder''s Gears', 'Technic', 1965, 43, 'https://cdn.example/001-1.jpg');
-COMMIT;
 `);
   });
 
-  it("splits seed SQL into transactions of at most 500 values", () => {
+  it("splits seed SQL into statements of at most 500 values", () => {
     const makeRows = (count: number) =>
       Array.from({ length: count }, (_, index) => ({
         setNumber: `${index}-1`,
@@ -72,16 +70,16 @@ COMMIT;
         pieceCount: index,
         imageUrl: `https://cdn.example/${index}-1.jpg`,
       }));
-    const transactions = (rows: ReturnType<typeof makeRows>) =>
+    const statements = (rows: ReturnType<typeof makeRows>) =>
       buildSeedSql(rows)
-        .split("COMMIT;")
-        .filter((transaction) => transaction.trim() !== "");
-    const valueCount = (transaction: string) =>
-      transaction.slice(transaction.indexOf("VALUES ") + "VALUES ".length).match(/\(/g)?.length;
+        .split(";")
+        .filter((statement) => statement.trim() !== "");
+    const valueCount = (statement: string) =>
+      statement.slice(statement.indexOf("VALUES ") + "VALUES ".length).match(/\(/g)?.length;
 
-    expect(transactions(makeRows(500))).toHaveLength(1);
-    expect(valueCount(transactions(makeRows(500))[0])).toBe(500);
-    expect(transactions(makeRows(501))).toHaveLength(2);
-    expect(transactions(makeRows(501)).map(valueCount)).toEqual([500, 1]);
+    expect(statements(makeRows(500))).toHaveLength(1);
+    expect(valueCount(statements(makeRows(500))[0])).toBe(500);
+    expect(statements(makeRows(501))).toHaveLength(2);
+    expect(statements(makeRows(501)).map(valueCount)).toEqual([500, 1]);
   });
 });

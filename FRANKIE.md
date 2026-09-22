@@ -41,6 +41,6 @@ Before every installation or change, state the exact command or manual action an
 
 For a missing Node runtime, report `FAIL`, explain that Expo tooling requires Node, and offer neutral version-manager options such as `nvm`, `fnm`, `asdf`, `volta`, `mise`, or Homebrew. Do not choose, install, or configure one without attendee confirmation.
 
-For missing Xcode during optional iOS diagnostics, provide the official installation link: <https://developer.apple.com/xcode/>. Give manual installation steps only. Do not open App Store, authenticate, download, install, or accept license prompts for the attendee.
+For missing Xcode during optional iOS diagnostics, provide the official installation link: <https://developer.apple.com/xcode/>. Give these manual steps only: attendee opens the link, chooses the current Xcode download or App Store listing, signs in with their own Apple account if prompted, completes the installer, then opens Xcode and accepts its own license/components prompts. Do not open App Store, authenticate, download, install, or accept license prompts for the attendee.
 
 After an attendee confirms a repair, re-check only that item, update the table, and print remaining blockers. Continue only after the attendee chooses the next action.

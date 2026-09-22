@@ -144,7 +144,7 @@ export function buildSeedSql(rows: SetRow[]): string {
     const values = rows.slice(start, start + batchSize).map((row) =>
       `(${sqlString(row.setNumber)}, ${sqlString(row.name)}, ${sqlString(row.theme)}, ${row.year}, ${row.pieceCount}, ${sqlString(row.imageUrl)})`,
     );
-    batches.push(`BEGIN TRANSACTION;\nINSERT OR REPLACE INTO sets (set_number, name, theme, year, piece_count, image_url)\nVALUES ${values.join(",\n")};\nCOMMIT;`);
+    batches.push(`INSERT OR REPLACE INTO sets (set_number, name, theme, year, piece_count, image_url)\nVALUES ${values.join(",\n")};`);
   }
   return batches.length === 0 ? "" : `${batches.join("\n")}\n`;
 }
