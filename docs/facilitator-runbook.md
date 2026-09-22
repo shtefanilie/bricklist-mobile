@@ -28,8 +28,8 @@ session. Stop at every confirmation point; do not automate this sequence.
 ```bash
 npm install
 npm run import:data --workspace=@bricklist/worker
-npx wrangler d1 migrations apply bricklist-workshop --remote
-npx wrangler d1 execute bricklist-workshop --remote --file=generated/seed-sets.sql
+npx wrangler d1 migrations apply bricklist-workshop --remote --cwd worker
+npx wrangler d1 execute bricklist-workshop --remote --file=generated/seed-sets.sql --cwd worker
 npx wrangler secret put WORKSHOP_API_KEY_SHA256 --cwd worker
 npx wrangler deploy --cwd worker
 ```
@@ -38,7 +38,9 @@ npx wrangler deploy --cwd worker
 pending migration before approving the remote D1 migration.
 
 **Manual confirmation: import.** Confirm `worker/generated/seed-sets.sql` is generated from
-the current local CSV files, then review Wrangler's remote database target before executing it.
+the current local CSV files. The D1 commands run with `--cwd worker`, so
+`generated/seed-sets.sql` resolves to that file. Review Wrangler's remote database target before
+executing it.
 
 **Manual confirmation: shared key.** Generate a random raw key locally. Compute its SHA-256
 hash and enter only that hash when Wrangler prompts for `WORKSHOP_API_KEY_SHA256`. Keep the raw
