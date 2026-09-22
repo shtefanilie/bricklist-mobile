@@ -31,13 +31,13 @@ Present results in this exact table shape before proposing remediation:
 | --- | --- | --- | --- | --- |
 | PASS/WARNING/FAIL | Name | Observed value or attendee confirmation | Readiness requirement | No action or attendee-owned next step |
 
-Use `PASS` for satisfied checks, `WARNING` for optional or attendee-confirmed items that cannot be independently inspected, and `FAIL` for blockers.
+Use `PASS` for satisfied checks, including confirmed required readiness conditions such as Expo Go installation and same-network access. Use `WARNING` only for unresolved non-blocking uncertainty, and `FAIL` for blockers.
 
 After the Expo Go table, ask: "Would you like optional iOS or Android native diagnostics?" Do not run native diagnostics unless the attendee requests them.
 
 ## Remediation Protocol
 
-Before every installation or system change, state the exact command or manual action and its effect. Ask for explicit confirmation. Wait for confirmation; do not run or imply completion of the change otherwise.
+Before every installation or change, state the exact command or manual action and its effect. Ask for explicit confirmation. Wait for confirmation; do not run or imply completion of the change otherwise.
 
 For a missing Node runtime, report `FAIL`, explain that Expo tooling requires Node, and offer neutral version-manager options such as `nvm`, `fnm`, `asdf`, `volta`, `mise`, or Homebrew. Do not choose, install, or configure one without attendee confirmation.
 
