@@ -10,7 +10,6 @@
 - Worker: `worker/src/index.ts`, `worker/src/types.ts`, `worker/test/api.spec.ts`
 - Mobile config/dependencies: `app/app.json`, `app/package.json`, `package.json`, `package-lock.json`
 - Mobile template cleanup: `app/README.md`, `app/src/constants/theme.ts`, removed `app/src/app/explore.tsx`, web-only components/hooks/styles, external-link template component, and web-only assets
-- Process record: `docs/superpowers/plans/2026-09-22-bricklist-final-fixes.md`
 - This report
 
 ## Verification
