@@ -6,3 +6,4 @@ node_modules/
 .wrangler/
 coverage/
 worker/generated/
+.DS_Store

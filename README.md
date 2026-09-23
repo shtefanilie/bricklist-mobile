@@ -39,7 +39,7 @@ You are sleepy after all that delicious lunch you had? Well, Frankie can't fix t
 Open `app/.env.local` and replace both placeholder values with the URL and temporary workshop key from the slides:
 
 ```dotenv
-EXPO_PUBLIC_API_BASE_URL=https://your-workshop-api.example
+EXPO_PUBLIC_API_BASE_URL=https://bricklist-workshop.stefanionut92.workers.dev
 EXPO_PUBLIC_WORKSHOP_API_KEY=your-temporary-workshop-key
 ```
 
