@@ -1,14 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchSets } from '@/api';
-import type { PaginatedSets } from '@/types';
+import type { PaginatedSets, SetRecord } from '@/types';
 
 type FetchState = 'idle' | 'loading' | 'success' | 'empty' | 'error';
 
+function SetCard({ set }: { set: SetRecord }) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (revealTimer.current) clearTimeout(revealTimer.current);
+  }, []);
+
+  function revealImageAfterRandomDelay() {
+    if (revealTimer.current) clearTimeout(revealTimer.current);
+    revealTimer.current = setTimeout(() => setImageLoaded(true), Math.floor(Math.random() * 1001));
+  }
+
+  return (
+    <View style={styles.setCard}>
+      <Image
+        accessibilityLabel={`${set.name} image`}
+        onLoadEnd={revealImageAfterRandomDelay}
+        source={{ uri: set.imageUrl }}
+        style={[styles.image, { height: imageLoaded ? 180 : 0 }]}
+      />
+      <Text>{set.setNumber}</Text>
+      <Text style={styles.setName}>{set.name}</Text>
+      <Text>{set.theme}</Text>
+      <Text>{set.year}</Text>
+      <Text>{set.pieceCount} pieces</Text>
+    </View>
+  );
+}
+
 export default function HomeScreen() {
   const [page, setPage] = useState(1);
+  const [seed] = useState(() => Math.floor(Math.random() * 2_147_483_647) + 1);
   const [retryCount, setRetryCount] = useState(0);
   const [state, setState] = useState<FetchState>('idle');
   const [data, setData] = useState<PaginatedSets | null>(null);
@@ -22,7 +53,7 @@ export default function HomeScreen() {
       setError('');
 
       try {
-        const response = await fetchSets(page, controller.signal);
+        const response = await fetchSets(page, seed, controller.signal);
         if (controller.signal.aborted) return;
 
         setData(response);
@@ -38,7 +69,7 @@ export default function HomeScreen() {
 
     void loadSets();
     return () => controller.abort();
-  }, [page, retryCount]);
+  }, [page, retryCount, seed]);
 
   const canGoPrevious = page > 1;
   const canGoNext = data !== null && data.page * data.limit < data.total;
@@ -55,20 +86,7 @@ export default function HomeScreen() {
             {state === 'empty' ? (
               <Text>No sets found.</Text>
             ) : (
-              data.items.map((set) => (
-                <View key={set.setNumber} style={styles.setCard}>
-                  <Image
-                    accessibilityLabel={`${set.name} image`}
-                    source={{ uri: set.imageUrl }}
-                    style={styles.image}
-                  />
-                  <Text>{set.setNumber}</Text>
-                  <Text style={styles.setName}>{set.name}</Text>
-                  <Text>{set.theme}</Text>
-                  <Text>{set.year}</Text>
-                  <Text>{set.pieceCount} pieces</Text>
-                </View>
-              ))
+              data.items.map((set) => <SetCard key={set.setNumber} set={set} />)
             )}
 
             <View style={styles.pagination}>
@@ -95,7 +113,7 @@ const styles = StyleSheet.create({
   content: { gap: 16, padding: 16 },
   title: { fontSize: 28, fontWeight: '700' },
   setCard: { gap: 4, borderColor: '#d1d5db', borderWidth: 1, borderRadius: 8, padding: 12 },
-  image: { width: '100%', height: 180, resizeMode: 'contain' },
+  image: { width: '100%', resizeMode: 'contain' },
   setName: { fontWeight: '600' },
   pagination: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
   error: { gap: 12 },

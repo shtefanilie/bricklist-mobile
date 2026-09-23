@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
 import HomeScreen from '@/app/index';
 import { fetchSets } from '@/api';
@@ -29,6 +29,11 @@ describe('HomeScreen', () => {
     jest.resetAllMocks();
   });
 
+  afterEach(() => {
+    jest.useRealTimers();
+    jest.restoreAllMocks();
+  });
+
   it('shows a loading message while the first request is pending', async () => {
     fetchSetsMock.mockReturnValue(new Promise(() => {}));
 
@@ -44,7 +49,7 @@ describe('HomeScreen', () => {
 
     await waitFor(() => expect(screen.getByText('Back to the Future Time Machine')).toBeTruthy());
 
-    expect(fetchSetsMock).toHaveBeenCalledWith(1, expect.anything());
+    expect(fetchSetsMock).toHaveBeenCalledWith(1, expect.any(Number), expect.anything());
     expect(screen.getByText('10300-1')).toBeTruthy();
     expect(screen.getByText('LEGO Icons')).toBeTruthy();
     expect(screen.getByText('2022')).toBeTruthy();
@@ -55,15 +60,36 @@ describe('HomeScreen', () => {
     expect(screen.getByRole('button', { name: 'Next' }).props.accessibilityState.disabled).toBe(false);
   });
 
+  it('shifts the layout when an image finishes loading', async () => {
+    fetchSetsMock.mockResolvedValue(pageOne);
+
+    const { findByLabelText } = await render(<HomeScreen />);
+
+    const image = await findByLabelText('Back to the Future Time Machine image');
+    expect(image).toHaveStyle({ height: 0 });
+
+    jest.spyOn(Math, 'random').mockReturnValue(0.5);
+    jest.useFakeTimers();
+    await act(async () => fireEvent(image, 'loadEnd'));
+    expect(image).toHaveStyle({ height: 0 });
+
+    await act(async () => jest.advanceTimersByTime(249));
+    expect(image).toHaveStyle({ height: 0 });
+
+    await act(async () => jest.advanceTimersByTime(1));
+    expect(image).toHaveStyle({ height: 180 });
+  });
+
   it('loads the next page when Next is pressed', async () => {
     fetchSetsMock.mockResolvedValue(pageOne);
 
     render(<HomeScreen />);
     await waitFor(() => expect(screen.getByText('Page 1')).toBeTruthy());
+    const seed = fetchSetsMock.mock.calls[0][1];
 
     fireEvent.press(screen.getByRole('button', { name: 'Next' }));
 
-    await waitFor(() => expect(fetchSetsMock).toHaveBeenLastCalledWith(2, expect.anything()));
+    await waitFor(() => expect(fetchSetsMock).toHaveBeenLastCalledWith(2, seed, expect.anything()));
   });
 
   it('shows a retryable error after a failed request', async () => {

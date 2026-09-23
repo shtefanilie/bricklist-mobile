@@ -12,15 +12,20 @@ type SetRow = {
 export function parseListQuery(url: URL): ListQuery {
   const page = parsePositiveInteger(url.searchParams.get("page"), 1, "page");
   const limit = parsePositiveInteger(url.searchParams.get("limit"), 20, "limit");
+  const seedValue = url.searchParams.get("seed");
+  const seed = seedValue === null ? undefined : parsePositiveInteger(seedValue, 1, "seed");
 
   if (limit > 100) {
     throw new RangeError("limit must not exceed 100");
+  }
+  if (seed !== undefined && seed > 2_147_483_647) {
+    throw new RangeError("seed must not exceed 2147483647");
   }
 
   const search = url.searchParams.get("search")?.trim() || undefined;
   const theme = url.searchParams.get("theme")?.trim() || undefined;
 
-  return { page, limit, search, theme };
+  return { page, limit, seed, search, theme };
 }
 
 export async function listSets(db: D1Database, query: ListQuery): Promise<PaginatedSets> {
@@ -38,12 +43,16 @@ export async function listSets(db: D1Database, query: ListQuery): Promise<Pagina
 
   const where = filters.length ? ` WHERE ${filters.join(" AND ")}` : "";
   const offset = (query.page - 1) * query.limit;
+  const orderBy = query.seed === undefined
+    ? "set_number"
+    : "((rowid * (((? * 1103515245 + 12345) & 2147483647) | 1)) & 2147483647), set_number";
+  const orderValues = query.seed === undefined ? [] : [query.seed];
   const [itemsResult, totalResult] = await Promise.all([
     db
       .prepare(
-        `SELECT set_number AS setNumber, name, theme, year, piece_count AS pieceCount, image_url AS imageUrl FROM sets${where} ORDER BY set_number LIMIT ? OFFSET ?`,
+        `SELECT set_number AS setNumber, name, theme, year, piece_count AS pieceCount, image_url AS imageUrl FROM sets${where} ORDER BY ${orderBy} LIMIT ? OFFSET ?`,
       )
-      .bind(...values, query.limit, offset)
+      .bind(...values, ...orderValues, query.limit, offset)
       .all<SetRow>(),
     db.prepare(`SELECT COUNT(*) AS total FROM sets${where}`).bind(...values).first<{ total: number }>(),
   ]);

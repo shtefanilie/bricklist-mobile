@@ -85,6 +85,31 @@ describe("Worker API", () => {
     });
   });
 
+  it("rejects an invalid random-order seed", async () => {
+    const response = await SELF.fetch("https://example.test/sets?seed=0", keyed);
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({
+      error: { code: "invalid_query", message: "seed must be at least 1" },
+    });
+  });
+
+  it("keeps seeded pages stable and changes order for a different seed", async () => {
+    const first = await SELF.fetch("https://example.test/sets?page=1&limit=1&seed=1", keyed);
+    const firstAgain = await SELF.fetch("https://example.test/sets?page=1&limit=1&seed=1", keyed);
+    const second = await SELF.fetch("https://example.test/sets?page=2&limit=1&seed=1", keyed);
+    const differentSeed = await SELF.fetch("https://example.test/sets?page=1&limit=1&seed=2", keyed);
+
+    const firstBody = await first.json<{ items: { setNumber: string }[] }>();
+    const firstAgainBody = await firstAgain.json<{ items: { setNumber: string }[] }>();
+    const secondBody = await second.json<{ items: { setNumber: string }[] }>();
+    const differentSeedBody = await differentSeed.json<{ items: { setNumber: string }[] }>();
+
+    expect(firstAgainBody.items).toEqual(firstBody.items);
+    expect(secondBody.items[0].setNumber).not.toBe(firstBody.items[0].setNumber);
+    expect(differentSeedBody.items).not.toEqual(firstBody.items);
+  });
+
   it("returns paginated public set fields without exposing the API key", async () => {
     const response = await SELF.fetch("https://example.test/sets?page=1&limit=20", keyed);
     const body = await response.json();

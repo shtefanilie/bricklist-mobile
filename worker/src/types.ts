@@ -31,6 +31,7 @@ export interface ApiError {
 export interface ListQuery {
   page: number;
   limit: number;
+  seed?: number;
   search?: string;
   theme?: string;
 }

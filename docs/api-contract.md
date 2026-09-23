@@ -21,12 +21,15 @@ GET /health
 ## List Sets
 
 ```http
-GET /sets?page=1&limit=20
+GET /sets?page=1&limit=20&seed=48291
 X-API-Key: <shared-workshop-key>
 ```
 
 `page` defaults to `1`; `limit` defaults to `20` and must be from `1` through `100`.
-Results are ordered by set number.
+`seed` is optional and must be from `1` through `2147483647`. A seed produces a
+deterministic random-looking order: reuse it for every page in one browsing session to
+avoid duplicates or missing sets, then choose a new seed for a new order. Without a seed,
+results are ordered by set number.
 
 ```json
 {
@@ -95,6 +98,7 @@ All errors use this shape:
 | --- | --- | --- |
 | 400 | `page` or `limit` is invalid | `{ "error": { "code": "invalid_query", "message": "page must be at least 1" } }` |
 | 400 | `limit` is above 100 | `{ "error": { "code": "invalid_query", "message": "limit must not exceed 100" } }` |
+| 400 | `seed` is outside its supported range | `{ "error": { "code": "invalid_query", "message": "seed must be at least 1" } }` |
 | 401 | Key missing or invalid | `{ "error": { "code": "unauthorized", "message": "Unauthorized" } }` |
 | 404 | Set does not exist | `{ "error": { "code": "not_found", "message": "Set not found" } }` |
 | 404 | Method or route does not exist | `{ "error": { "code": "not_found", "message": "Not found" } }` |
