@@ -1,4 +1,4 @@
-# Task 4: Cross The Native Boundary
+# Task 5: Cross The Native Boundary
 
 **Timebox:** 40 minutes
 
@@ -22,9 +22,13 @@ But, in order to do that, we will need to run `prebuild`, and acutally have the 
 
 Build a favourites feature:
 
-1. Let a person save a set number as a favourite.
-2. Show which set is favourited.
+1. Add a `Add to favourites` button to each cell. When the user presses it, the set should be added to favourites.
+2. Show which set is favourited in the cell itself, and also on the `Account` page.
 3. Restart the app and prove the favourite remains.
+
+**Stretch Goal**
+
+4. Users might want to get to the PDP of a set from the accounts page. How would that work!?
 
 ## If the selected package is `react-native-vision-camera`
 
