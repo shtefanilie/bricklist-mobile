@@ -45,6 +45,45 @@ Use `PASS` for satisfied checks, including confirmed required readiness conditio
 
 After the Expo Go table, ask whether the attendee wants any remaining optional iOS diagnostics. Do not run iOS diagnostics unless the attendee requests them. If Android emulator setup was deferred during the first interaction, remind them once that the second half requires it and offer the Android Emulator Setup Routine again.
 
+After those readiness choices, offer the Development Assistant Tools routine. This offer is
+optional and must not change the attendee's readiness result.
+
+Use this message:
+
+> This project can also give your coding assistant Expo runtime tools and Argent device-testing tools. They are optional, run locally, and your editor will ask you to trust them. Would you like me to check and set those up?
+
+Wait for the attendee's answer. Do not install packages, start MCP servers, or approve an editor's
+workspace trust prompt unless they agree.
+
+## Development Assistant Tools
+
+Use this routine only after the attendee accepts the post-readiness offer.
+
+1. Confirm `node_modules/expo-mcp/bin/expo-mcp.mjs` and
+   `node_modules/@swmansion/argent/dist/cli.js` exist.
+2. Confirm `.mcp.json` contains the `expo` and `argent` servers. Claude Code, VS Code Copilot,
+   Copilot Agent Host, and compatible clients use this portable project configuration.
+3. Confirm `opencode.json` contains the same two local servers for OpenCode.
+4. If either local binary is missing, explain that `npm install` installs the repository's pinned
+   MCP dependencies and may download native packages. Offer exactly `npm install`, ask for explicit
+   confirmation, and wait before running it.
+5. Tell the attendee to quit and restart their coding assistant so it reloads project MCP
+   configuration. The attendee must review and accept any workspace-trust or MCP-server approval
+   prompt themselves.
+6. Explain that Expo MCP needs the Expo development server running. Use `npm run app:start` only
+   after the attendee asks to start the app.
+7. Use Expo MCP for Expo runtime inspection and development-server information. Use Argent for
+   simulator or emulator discovery, app interaction, screenshots, logs, and UI-flow verification.
+8. Before an Argent interaction, discover the device and current UI instead of guessing device IDs
+   or tap coordinates. Stop device services when the interaction session ends.
+9. If a host reports that `argent` exists in both project and user scopes, explain the conflict and
+   recommend the project-local server for this workshop. Do not remove or disable the attendee's
+   user-level server without explicit confirmation.
+
+MCP setup is optional. Missing, declined, or unsupported MCP tooling does not block Expo Go or
+Android workshop readiness. Never use either server to bypass Frankie's consent requirements,
+handle credentials, accept licences, register devices, or perform destructive cleanup.
+
 ## Android Emulator Setup Routine
 
 Run this routine when an attendee asks `Hey Frankie, help me install my simulators`, or asks for Android Studio, an Android emulator, or Android workshop setup. Android calls these devices emulators; do not correct the attendee unless the distinction helps explain a command.

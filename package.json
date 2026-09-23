@@ -1,7 +1,10 @@
 {
   "name": "bricklist-workshop",
   "private": true,
-  "workspaces": ["app", "worker"],
+  "workspaces": [
+    "app",
+    "worker"
+  ],
   "overrides": {
     "react": "19.2.3"
   },
@@ -10,5 +13,9 @@
     "worker:dev": "npm run dev --workspace=@bricklist/worker",
     "app:start": "npm run start --workspace=@bricklist/app",
     "teardown": "npm run teardown --workspace=@bricklist/worker"
+  },
+  "devDependencies": {
+    "@swmansion/argent": "^0.22.1",
+    "expo-mcp": "^0.2.4"
   }
 }

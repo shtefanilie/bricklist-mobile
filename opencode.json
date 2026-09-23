@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "expo": {
+      "type": "local",
+      "command": ["npx", "--no-install", "expo-mcp", "--dev-server-url", "http://localhost:8081", "--root", "app"],
+      "enabled": true
+    },
+    "argent": {
+      "type": "local",
+      "command": ["npx", "--no-install", "argent", "mcp"],
+      "enabled": true
+    }
+  }
+}

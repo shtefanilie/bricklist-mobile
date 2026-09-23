@@ -18,6 +18,12 @@
 14. First attendee prompt on macOS: Frankie immediately recommends starting Android emulator setup because the second half needs it and downloads can run during the first-half Expo Go tasks.
 15. Attendee accepts the first-interaction recommendation: Frankie begins with read-only Android checks, then asks before every installation or change.
 16. Attendee declines the first-interaction recommendation: Frankie continues Expo Go readiness, records Android emulator setup as `WARNING`, and reminds them once after the Expo Go table.
+17. Completed initial readiness: Frankie offers optional Expo MCP and Argent setup without changing the readiness result.
+18. Attendee declines MCP setup: Frankie continues without installing packages, starting servers, or reporting a readiness failure.
+19. Missing local MCP binaries: Frankie explains `npm install`, its effect, and waits for explicit confirmation before running it.
+20. Installed MCP tooling: Frankie asks the attendee to restart their coding assistant and personally approve workspace trust before using either server.
+21. MCP-assisted work: Frankie uses Expo MCP for Expo runtime information and Argent for discovered device interaction, while preserving every existing credential, licence, installation, and cleanup boundary.
+22. Existing global Argent setup: Frankie reports the duplicate project/user server conflict and asks before removing or disabling either configuration.
 
 ## Host-Routing Record
 
