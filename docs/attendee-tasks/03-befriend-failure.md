@@ -18,6 +18,10 @@ This makes cards jump around. It also renders the page with a `ScrollView` and `
 5. Use `numColumns` for grid and list modes, key the list by layout mode, use `keyExtractor` for set numbers, and enable `recycleItems` after removing card-local state.
 6. Using the built in [infinite scrolling](https://www.legendapp.com/open-source/list/v2/examples/infinite-scrolling/) remove the pagination and make the app way smoother.
 
+**Stretch goal**
+
+7. Improve the UI a bit. Sprinke some _pizzazz_ make it Liquid Glass, Fruitiger Aero, or Neo-Brutalism. Whatever you fancy :)
+
 Legend List is written in TypeScript and has no native dependency, so it works in Expo Go. Its API follows React Native's list components closely.
 
 ## Finish line

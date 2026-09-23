@@ -7,7 +7,8 @@ You have BrickList running. Nice one. Work through these tasks in order with you
 | [1. Make it yours](01-make-it-yours.md) | Find a screen, change it, watch hot reload |
 | [2. Find some bricks](02-find-some-bricks.md) | State, inputs, and a real authenticated API request |
 | [3. Smooth out the bricks](03-befriend-failure.md) | Stable image loading and virtualized lists |
-| [4. Cross the native boundary](04-cross-the-native-boundary.md) | Why Expo Go has limits; development builds and one native package |
+| [4. Add a new screen](04-new-screen.md) | Description |
+| [5. Cross the native boundary](04-cross-the-native-boundary.md) | Why Expo Go has limits; development builds and one native package |
 
 Take a break at 1:00. Ask for a helper early if you are blocked for more than five minutes. Getting unstuck is part of the workshop, not a side quest.
 
