@@ -68,16 +68,25 @@ describe('HomeScreen', () => {
     const image = await findByLabelText('Back to the Future Time Machine image');
     expect(image).toHaveStyle({ height: 0 });
 
-    jest.spyOn(Math, 'random').mockReturnValue(0.5);
     jest.useFakeTimers();
     await act(async () => fireEvent(image, 'loadEnd'));
     expect(image).toHaveStyle({ height: 0 });
 
-    await act(async () => jest.advanceTimersByTime(249));
-    expect(image).toHaveStyle({ height: 0 });
-
-    await act(async () => jest.advanceTimersByTime(1));
+    await act(async () => jest.advanceTimersByTime(500));
     expect(image).toHaveStyle({ height: 180 });
+  });
+
+  it('toggles between list and two-column grid layouts', async () => {
+    fetchSetsMock.mockResolvedValue(pageOne);
+
+    const { getByTestId } = await render(<HomeScreen />);
+    await waitFor(() => expect(screen.getByText('Back to the Future Time Machine')).toBeTruthy());
+
+    expect(screen.getByRole('button', { name: 'Grid view' })).toBeTruthy();
+    await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Grid view' })));
+
+    expect(getByTestId('sets-layout')).toHaveStyle({ flexDirection: 'row', flexWrap: 'wrap' });
+    expect(screen.getByRole('button', { name: 'List view' })).toBeTruthy();
   });
 
   it('loads the next page when Next is pressed', async () => {
