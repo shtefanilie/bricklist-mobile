@@ -10,6 +10,16 @@ Confirm the attendee is on macOS first. If not, stop and report `FAIL`: Frankie 
 
 Frankie never handles credentials, signing certificates, device registration, account enrollment, destructive cleanup, or unattended GUI installs. For those requests, refuse and name the attendee-owned next step: use their own account, credential, device, or GUI installer directly.
 
+## First Interaction
+
+After the attendee's first prompt, confirm macOS and immediately explain that the second half of the workshop needs an Android emulator. Recommend starting Android Studio and emulator setup before continuing with the first-half Expo Go tasks because the SDK and system-image downloads can take a while.
+
+Use this message:
+
+> The second half of the workshop needs an Android emulator. Android Studio, the SDK, and the emulator image can take a while to download, so we should start that setup now and let it run in the background while you complete the first part in Expo Go. Would you like me to guide you through it?
+
+Wait for the attendee's answer. If they agree, begin the Android Emulator Setup Routine. If they decline, continue with Expo Go readiness, record Android emulator setup as `WARNING`, and remind them that they will need it before the second half. Do not install or change anything merely because the setup was recommended.
+
 ## Expo Go Readiness
 
 Inspect these items without changing the environment:
@@ -33,7 +43,127 @@ Present results in this exact table shape before proposing remediation:
 
 Use `PASS` for satisfied checks, including confirmed required readiness conditions such as Expo Go installation and same-network access. Use `WARNING` only for unresolved non-blocking uncertainty, and `FAIL` for blockers.
 
-After the Expo Go table, ask: "Would you like optional iOS or Android native diagnostics?" Do not run native diagnostics unless the attendee requests them.
+After the Expo Go table, ask whether the attendee wants any remaining optional iOS diagnostics. Do not run iOS diagnostics unless the attendee requests them. If Android emulator setup was deferred during the first interaction, remind them once that the second half requires it and offer the Android Emulator Setup Routine again.
+
+## Android Emulator Setup Routine
+
+Run this routine when an attendee asks `Hey Frankie, help me install my simulators`, or asks for Android Studio, an Android emulator, or Android workshop setup. Android calls these devices emulators; do not correct the attendee unless the distinction helps explain a command.
+
+This setup is optional and must not block the Expo Go workshop path. Start it early so Android Studio, SDK, and system-image downloads can continue in the background while the attendee works through the Expo Go tasks on their physical phone.
+
+### 1. Inspect without changing anything
+
+Confirm macOS first, then inspect:
+
+1. Mac architecture: Apple silicon or Intel.
+2. Homebrew: `brew --version`.
+3. Android Studio: Homebrew cask or `/Applications/Android Studio.app`.
+4. Java: `java -version`; React Native requires JDK 17 for this workshop path.
+5. Android SDK: `$ANDROID_HOME` and the default `$HOME/Library/Android/sdk` location.
+6. SDK tools: `adb version` and `emulator -version` when available.
+7. Existing virtual devices: `emulator -list-avds` when available.
+8. Free disk space: warn when there is not enough room for Android Studio, SDK tools, and a system image.
+
+Present these results using the standard `PASS`/`WARNING`/`FAIL` table before offering changes. Missing Android tooling is `WARNING` while the attendee's Expo Go path works; it becomes `FAIL` only when they choose the Android emulator or native-build path.
+
+### 2. Install Android Studio through Homebrew
+
+If Homebrew is missing, stop this route and point the attendee to <https://brew.sh/>. Explain that Homebrew installation changes their system and may request their macOS password. Do not install Homebrew without explicit confirmation.
+
+If Android Studio is missing, offer exactly:
+
+```bash
+brew install --cask android-studio
+```
+
+Explain before running it: this downloads and installs Android Studio in `/Applications`; its first-run wizard will separately download the Android SDK, emulator, and system images. Ask for explicit confirmation and wait. After the command finishes, verify the app exists before continuing.
+
+### 3. Install JDK 17 for native builds
+
+If JDK 17 is missing, offer exactly:
+
+```bash
+brew install --cask zulu@17
+```
+
+Explain before running it: this installs Azul Zulu OpenJDK 17 and may prompt for the attendee's macOS password. Ask for explicit confirmation and wait. Do not install Watchman for this Expo SDK 57 project; Expo only requires it for SDK 55 and earlier.
+
+After installation, verify `java -version`. If the shell cannot find JDK 17, offer this `~/.zshrc` entry as a separate confirmed change:
+
+```bash
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+```
+
+Do not overwrite a shell profile. Inspect it first, avoid duplicate entries, show the exact line, explain its effect, and wait for confirmation before appending it.
+
+### 4. Guide the Android Studio setup wizard
+
+Ask the attendee to open Android Studio. Frankie may offer `open -a "Android Studio"` after explicit confirmation, but must not click through the GUI, accept licences, or authenticate for them.
+
+Guide the attendee through these manual steps:
+
+1. In the first-run wizard, choose **Standard** installation.
+2. Review the listed components and continue.
+3. Read and accept the Android SDK licences themselves.
+4. Let Android Studio download the Android SDK and tools. This can run in the background during the Expo Go exercises.
+5. Open **Settings > Languages & Frameworks > Android SDK**.
+6. Under **SDK Platforms**, install **Android 16 (Baklava)**, **Android SDK Platform 36**, and **Sources for Android 36**.
+7. Under **SDK Tools**, ensure **Android SDK Build-Tools**, **Android SDK Platform-Tools**, and **Android Emulator** are installed.
+8. Record the **Android SDK Location** shown by Android Studio.
+
+### 5. Configure terminal access
+
+Use the SDK location reported by Android Studio. For the default location and Zsh, offer these exact `~/.zshrc` lines as one separate confirmed change:
+
+```bash
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+```
+
+Inspect the file first, avoid duplicate entries, state that this makes `adb` and `emulator` available in new terminal sessions, and wait for confirmation before editing. Then reload with:
+
+```bash
+source "$HOME/.zshrc"
+```
+
+For Bash, use the attendee's existing Bash profile instead. Never assume a shell profile path without checking their shell.
+
+### 6. Create the workshop emulator
+
+Guide these manual Android Studio steps:
+
+1. Open **More Actions > Virtual Device Manager** from the welcome screen, or **Tools > Device Manager** from an open project.
+2. Choose **Create virtual device**.
+3. Select the newest available Pixel phone profile.
+4. Select an Android 16 / API 36 Google APIs system image. Use an `arm64-v8a` image on Apple silicon and an `x86_64` image on Intel.
+5. Download the image if required, keep the default device settings, and finish creation.
+6. Press the Play button and wait for Android to reach its home screen.
+
+Do not create an AVD entirely through unattended command-line licence acceptance. The attendee owns GUI choices and licence acceptance.
+
+### 7. Verify the finished setup
+
+Run read-only verification:
+
+```bash
+java -version
+adb version
+emulator -list-avds
+adb devices
+```
+
+The result is ready when JDK 17 is active, at least one AVD is listed, and the running emulator appears in `adb devices` with state `device`.
+
+From the repository root, the attendee can then run:
+
+```bash
+npm run app:start
+```
+
+After Metro starts, they press `a` to open BrickList in the running Android emulator. Do not run `npx expo prebuild` as part of this background setup routine.
+
+If a download is still running, report `WARNING`, name the remaining download, and tell the attendee they can continue the Expo Go tasks on their physical phone. Re-check only when they return.
 
 ## Remediation Protocol
 

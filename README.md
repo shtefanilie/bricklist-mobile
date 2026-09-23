@@ -15,10 +15,22 @@ You need:
 - A Mac with Node.js and npm installed
 - Your own iPhone or Android phone
 - [Expo Go](https://expo.dev/go) installed on that phone
-- Your laptop and phone on the same workshop Wi-Fi
-- The workshop API URL and temporary key from the slides
+- Your laptop and phone on the same Wi-Fi
+- The API URL and temporary key from the slides
 
-Not sure whether your laptop is ready? Ask your workshop helper to run [Frankie](FRANKIE.md) with you. Frankie checks first and never installs or changes anything without your say-so.
+> For anything else, ask `Frankie` for help
+
+### Frankie
+
+Not sure whether your laptop is ready? Ask [Frankie the fixer](FRANKIE.md) to help you out. Throughout this journey, Frankie will be your go to companion.
+
+Don't have the Ruby version you need? Frankie'll fix it!
+
+Your machine has a java version missmatch? Frankie'll fix it!
+
+Simulators are not booting up your app? Frankie'll fix it!
+
+You are sleepy after all that delicious lunch you had? Well, Frankie can't fix that. 
 
 ## Get it running
 
@@ -31,7 +43,7 @@ EXPO_PUBLIC_API_BASE_URL=https://your-workshop-api.example
 EXPO_PUBLIC_WORKSHOP_API_KEY=your-temporary-workshop-key
 ```
 
-> This file is committed with placeholders so everyone starts from the same place. Do not commit a real workshop key, paste one into chat, or include one in a pull request.
+> This file is committed with placeholders so everyone starts from the same place. Do not commit a real workshop key, or include one in a pull request.
 
 ### 2. Install the project bits
 
@@ -45,7 +57,7 @@ npm install
 npm run app:start
 ```
 
-Expo will show a QR code in your terminal or browser.
+Expo will show a QR code in your terminal or browser. 
 
 ### 4. Open it on your phone
 
@@ -62,7 +74,11 @@ Give it a moment. You should see BrickList and a page of LEGO sets. That is you 
 
 If all three happen, you are flying. Start the exercise.
 
-## If it is being a little menace
+## Start the workshop
+
+Work through the [attendee tasks](docs/attendee-tasks/README.md) in order. Each task has its own file, timebox, goal, and finish line.
+
+## If it is being a little menace (troubleshooting)
 
 | Problem | Try this |
 | --- | --- |
@@ -74,14 +90,13 @@ If all three happen, you are flying. Start the exercise.
 
 ## Workshop ground rules
 
-- Break the app. That is how you learn; hot reload is your safety net.
+- Break the app. That is how you learn.
 - Ask daft questions early. They are normally the useful ones.
-- Keep real workshop keys out of Git, chat, screenshots, and pull requests.
-- Work only in the app unless a facilitator asks otherwise.
+- Keep API keys out of Git, chat, screenshots.
 
 ## Leave these alone
 
-Attendees do **not** need to download CSV files, import data, authenticate with Cloudflare, deploy anything, configure Worker secrets, or run teardown. That is facilitator territory. Do not waste your workshop fighting infrastructure, you wally.
+Attendees do **not** need to authenticate with Cloudflare, deploy anything, configure Worker secrets, or run teardown. That is facilitator territory. Do not waste your workshop fighting infrastructure, you wally.
 
 ## Facilitators
 
