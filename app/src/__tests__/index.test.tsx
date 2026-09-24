@@ -70,7 +70,7 @@ describe('HomeScreen', () => {
 
   it('opens the matching detail route when a set is pressed', async () => {
     fetchSetsMock.mockResolvedValue(pageOne);
-    render(<HomeScreen />);
+    await render(<HomeScreen />);
     await waitFor(() => expect(screen.getByRole('button', { name: 'View Back to the Future Time Machine' })).toBeTruthy());
     fireEvent.press(screen.getByRole('button', { name: 'View Back to the Future Time Machine' }));
     expect(router.push).toHaveBeenCalledWith('/(sets)/10300-1');
