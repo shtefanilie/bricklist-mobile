@@ -1,4 +1,5 @@
 import { LegendList } from '@legendapp/list/react-native';
+import { router, type Href } from 'expo-router';
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -46,7 +47,13 @@ export function HomeScreen() {
         onEndReached={loadMore}
         onEndReachedThreshold={0.4}
         recycleItems
-        renderItem={({ item }) => <SetCard isGrid={isGrid} set={item} />}
+        renderItem={({ item }) => (
+          <SetCard
+            isGrid={isGrid}
+            onPress={() => router.push(`/(sets)/${encodeURIComponent(item.setNumber)}` as Href)}
+            set={item}
+          />
+        )}
         testID="sets-layout"
       />
     </SafeAreaView>

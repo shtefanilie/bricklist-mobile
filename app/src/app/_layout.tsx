@@ -8,7 +8,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <NativeTabs minimizeBehavior="onScrollDown">
-        <NativeTabs.Trigger name="index">
+        <NativeTabs.Trigger name="(sets)">
           <NativeTabs.Trigger.Icon
             md="view_module"
             sf={{ default: 'square.grid.2x2', selected: 'square.grid.2x2.fill' }}

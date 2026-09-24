@@ -1,10 +1,12 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
-import HomeScreen from '@/app/index';
+import HomeScreen from '@/app/(sets)/index';
 import { fetchSets } from '@/api';
+import { router } from 'expo-router';
 import type { PaginatedSets, SetRecord } from '@/types';
 
 jest.mock('@/api', () => ({ fetchSets: jest.fn() }));
+jest.mock('expo-router', () => ({ router: { push: jest.fn() } }));
 // Native list virtualization needs a measured viewport, unavailable in the Jest renderer.
 jest.mock('@legendapp/list/react-native', () => {
   const React = jest.requireActual('react');
@@ -64,6 +66,14 @@ describe('HomeScreen', () => {
     expect(screen.getByLabelText('Back to the Future Time Machine image')).toHaveStyle({ height: 180 });
     expect(screen.getByRole('button', { name: 'List view' })).toBeTruthy();
     expect(fetchSetsMock).toHaveBeenCalledWith(1, expect.any(Number), '', expect.anything());
+  });
+
+  it('opens the matching detail route when a set is pressed', async () => {
+    fetchSetsMock.mockResolvedValue(pageOne);
+    render(<HomeScreen />);
+    await waitFor(() => expect(screen.getByRole('button', { name: 'View Back to the Future Time Machine' })).toBeTruthy());
+    fireEvent.press(screen.getByRole('button', { name: 'View Back to the Future Time Machine' }));
+    expect(router.push).toHaveBeenCalledWith('/(sets)/10300-1');
   });
 
   it('toggles grid and list layouts', async () => {

@@ -4,7 +4,7 @@
 
 ## Mission
 
-BrickList already calls the workshop API in `app/src/api.ts`. The route `app/src/app/index.tsx` loads `app/src/screens/home-screen.tsx`; pagination lives in `app/src/hooks/usePaginatedSets.ts`. Your job is to give people a way to choose what they fetch.
+BrickList already calls the workshop API in `app/src/api.ts`. The route `app/src/app/(sets)/index.tsx` loads `app/src/screens/home-screen.tsx`; pagination lives in `app/src/hooks/usePaginatedSets.ts`. Your job is to give people a way to choose what they fetch.
 
 ## Build this
 
