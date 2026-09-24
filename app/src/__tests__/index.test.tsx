@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
 import HomeScreen from '@/app/(sets)/index';
+import AccountScreen from '@/app/account';
 import { fetchSets } from '@/api';
 import { router } from 'expo-router';
 import type { PaginatedSets, SetRecord } from '@/types';
@@ -74,6 +75,29 @@ describe('HomeScreen', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: 'View Back to the Future Time Machine' })).toBeTruthy());
     fireEvent.press(screen.getByRole('button', { name: 'View Back to the Future Time Machine' }));
     expect(router.push).toHaveBeenCalledWith('/(sets)/10300-1');
+  });
+
+  it('saves a favourite and shows it on Account after reopening the screen', async () => {
+    fetchSetsMock.mockResolvedValue(pageOne);
+    const home = await render(<HomeScreen />);
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Add to favourites' })).toBeTruthy());
+    fireEvent.press(screen.getByRole('button', { name: 'Add to favourites' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Remove from favourites' })).toBeTruthy());
+    await home.unmount();
+
+    const account = await render(<AccountScreen />);
+    expect(account.getByText('Back to the Future Time Machine')).toBeTruthy();
+    expect(account.getByText('10300-1')).toBeTruthy();
+  });
+
+  it('removes a favourite from a card', async () => {
+    fetchSetsMock.mockResolvedValue(pageOne);
+    render(<HomeScreen />);
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Add to favourites' })).toBeTruthy());
+    fireEvent.press(screen.getByRole('button', { name: 'Add to favourites' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Remove from favourites' })).toBeTruthy());
+    fireEvent.press(screen.getByRole('button', { name: 'Remove from favourites' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Add to favourites' })).toBeTruthy());
   });
 
   it('toggles grid and list layouts', async () => {

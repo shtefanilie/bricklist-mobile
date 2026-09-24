@@ -5,12 +5,14 @@ import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SetCard } from '@/components/set-card';
+import { useFavourites } from '@/hooks/useFavourites';
 import { usePaginatedSets } from '@/hooks/usePaginatedSets';
 
 export function HomeScreen() {
   const [isGrid, setIsGrid] = useState(true);
   const [searchInput, setSearchInput] = useState('');
   const { error, items, loadMore, page, retry, state, submitSearch } = usePaginatedSets();
+  const { isFavourite, toggleFavourite } = useFavourites();
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -50,6 +52,8 @@ export function HomeScreen() {
         renderItem={({ item }) => (
           <SetCard
             isGrid={isGrid}
+            isFavourite={isFavourite(item.setNumber)}
+            onToggleFavourite={() => toggleFavourite(item)}
             onPress={() => router.push(`/(sets)/${encodeURIComponent(item.setNumber)}` as Href)}
             set={item}
           />

@@ -22,6 +22,8 @@ But, in order to do that, we will need to run `prebuild`, and acutally have the 
 
 Build a favourites feature:
 
+For MMKV v4, install `react-native-mmkv`, `react-native-nitro-modules`, and `expo-dev-client` together using `npx expo install`. This path needs a development build; Expo Go cannot load its native modules.
+
 1. Add a `Add to favourites` button to each cell. When the user presses it, the set should be added to favourites.
 2. Show which set is favourited in the cell itself, and also on the `Account` page.
 3. Restart the app and prove the favourite remains.
