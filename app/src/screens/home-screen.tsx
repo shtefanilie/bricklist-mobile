@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SetCard } from '@/components/set-card';
@@ -7,7 +7,8 @@ import { usePaginatedSets } from '@/hooks/usePaginatedSets';
 
 export function HomeScreen() {
   const [isGrid, setIsGrid] = useState(true);
-  const { canGoNext, canGoPrevious, data, error, goNext, goPrevious, retry, state } = usePaginatedSets();
+  const [searchInput, setSearchInput] = useState('');
+  const { canGoNext, canGoPrevious, data, error, goNext, goPrevious, retry, state, submitSearch } = usePaginatedSets();
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -18,6 +19,11 @@ export function HomeScreen() {
             onPress={() => setIsGrid((current) => !current)}
             title={isGrid ? 'List view' : 'Grid view'}
           />
+        </View>
+
+        <View style={styles.search}>
+          <TextInput accessibilityLabel="Search sets" onChangeText={setSearchInput} placeholder="Search sets" style={styles.searchInput} value={searchInput} />
+          <Button onPress={() => submitSearch(searchInput)} title="Search" />
         </View>
 
         {state === 'loading' && <Text>Loading sets…</Text>}
@@ -56,6 +62,8 @@ const styles = StyleSheet.create({
   content: { gap: 16, padding: 16 },
   header: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
   title: { fontSize: 28, fontWeight: '700' },
+  search: { alignItems: 'center', flexDirection: 'row', gap: 12 },
+  searchInput: { borderColor: '#d1d5db', borderRadius: 8, borderWidth: 1, flex: 1, padding: 12 },
   list: { gap: 16 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   pagination: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },

@@ -9,6 +9,7 @@ export function usePaginatedSets() {
   const [page, setPage] = useState(1);
   const [seed] = useState(() => Math.floor(Math.random() * 2_147_483_647) + 1);
   const [retryCount, setRetryCount] = useState(0);
+  const [activeSearch, setActiveSearch] = useState('');
   const [state, setState] = useState<FetchState>('idle');
   const [data, setData] = useState<PaginatedSets | null>(null);
   const [error, setError] = useState('');
@@ -21,7 +22,7 @@ export function usePaginatedSets() {
       setError('');
 
       try {
-        const response = await fetchSets(page, seed, controller.signal);
+        const response = await fetchSets(page, seed, activeSearch, controller.signal);
         if (controller.signal.aborted) return;
 
         setData(response);
@@ -37,7 +38,7 @@ export function usePaginatedSets() {
 
     void loadSets();
     return () => controller.abort();
-  }, [page, retryCount, seed]);
+  }, [activeSearch, page, retryCount, seed]);
 
   return {
     canGoNext: data !== null && data.page * data.limit < data.total,
@@ -48,5 +49,9 @@ export function usePaginatedSets() {
     goPrevious: () => setPage((current) => current - 1),
     retry: () => setRetryCount((count) => count + 1),
     state,
+    submitSearch: (search: string) => {
+      setActiveSearch(search.trim());
+      setPage(1);
+    },
   };
 }

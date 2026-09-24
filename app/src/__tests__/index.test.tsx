@@ -50,7 +50,7 @@ describe('HomeScreen', () => {
     await waitFor(() => expect(screen.getByText('Back to the Future Time Machine')).toBeTruthy());
     expect(screen.getByText('Welcome to BrickList')).toBeTruthy();
 
-    expect(fetchSetsMock).toHaveBeenCalledWith(1, expect.any(Number), expect.anything());
+    expect(fetchSetsMock).toHaveBeenCalledWith(1, expect.any(Number), '', expect.anything());
     expect(screen.getByText('10300-1')).toBeTruthy();
     expect(screen.getByText('LEGO Icons')).toBeTruthy();
     expect(screen.getByText('2022')).toBeTruthy();
@@ -100,7 +100,29 @@ describe('HomeScreen', () => {
 
     fireEvent.press(screen.getByRole('button', { name: 'Next' }));
 
-    await waitFor(() => expect(fetchSetsMock).toHaveBeenLastCalledWith(2, seed, expect.anything()));
+    await waitFor(() => expect(fetchSetsMock).toHaveBeenLastCalledWith(2, seed, '', expect.anything()));
+  });
+
+  it('submits a trimmed search from page one and keeps it through pagination', async () => {
+    fetchSetsMock.mockImplementation(async (requestedPage) => ({ ...pageOne, page: requestedPage }));
+    render(<HomeScreen />);
+    await waitFor(() => expect(screen.getByText('Page 1')).toBeTruthy());
+    const seed = fetchSetsMock.mock.calls[0][1];
+
+    await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Next' })));
+    await waitFor(() => expect(screen.getByText('Page 2')).toBeTruthy());
+    await act(async () => fireEvent.changeText(screen.getByPlaceholderText('Search sets'), '  gear  '));
+    expect(fetchSetsMock).toHaveBeenCalledTimes(2);
+
+    await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Search' })));
+    await waitFor(() => expect(fetchSetsMock).toHaveBeenLastCalledWith(1, seed, 'gear', expect.anything()));
+    await waitFor(() => expect(screen.getByText('Page 1')).toBeTruthy());
+
+    await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Next' })));
+    await waitFor(() => expect(fetchSetsMock).toHaveBeenLastCalledWith(2, seed, 'gear', expect.anything()));
+    await waitFor(() => expect(screen.getByText('Page 2')).toBeTruthy());
+    await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Previous' })));
+    await waitFor(() => expect(fetchSetsMock).toHaveBeenLastCalledWith(1, seed, 'gear', expect.anything()));
   });
 
   it('shows a retryable error after a failed request', async () => {

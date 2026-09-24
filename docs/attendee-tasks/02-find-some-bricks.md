@@ -4,12 +4,12 @@
 
 ## Mission
 
-BrickList already calls the workshop API in `app/src/api.ts` and renders results in `app/src/app/index.tsx`. Your job is to give people a way to choose what they fetch.
+BrickList already calls the workshop API in `app/src/api.ts`. The route `app/src/app/index.tsx` loads `app/src/screens/home-screen.tsx`; pagination lives in `app/src/hooks/usePaginatedSets.ts`. Your job is to give people a way to choose what they fetch.
 
 ## Build this
 
 1. Add a text input and a Search button to the home screen.
-2. Keep the text the user is typing in React state.
+2. Keep the text the user is typing in React state, separate from the submitted search used by pagination.
 3. Update `fetchSets` so it can optionally send `search=<text>` to the API.
 4. Start the search from page 1 when the button is pressed.
 5. Keep Previous and Next working for the current search.
