@@ -8,8 +8,8 @@ Find the BrickList home screen, change visible copy, and watch your phone update
 
 ## Start here
 
-1. Open `app/src/app/index.tsx`.
-2. Find the `BrickList` heading.
+1. Open `app/src/app/index.tsx`, then follow its export to `app/src/screens/home-screen.tsx`.
+2. Find the `BrickList` heading in `home-screen.tsx`.
 3. Change it to a short welcome message for your pair or LEGO theme.
 4. Save the file and watch Expo Go hot-reload on your phone.
 5. Change one more visible string on the screen.
@@ -17,7 +17,7 @@ Find the BrickList home screen, change visible copy, and watch your phone update
 ## Finish line
 
 - Your phone shows both of your copy changes.
-- You can point at `app/src/app/index.tsx` and explain why it is the home screen.
+- You can point at `app/src/app/index.tsx` and explain how it loads `home-screen.tsx` as the home screen.
 - You did not restart Expo to see the change.
 
 ## If stuck

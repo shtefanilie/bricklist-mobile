@@ -13,7 +13,7 @@ export function HomeScreen() {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.title}>BrickList</Text>
+          <Text style={styles.title}>Welcome to BrickList</Text>
           <Button
             onPress={() => setIsGrid((current) => !current)}
             title={isGrid ? 'List view' : 'Grid view'}
@@ -25,7 +25,7 @@ export function HomeScreen() {
         {(state === 'success' || state === 'empty') && data && (
           <>
             {state === 'empty' ? (
-              <Text>No sets found.</Text>
+              <Text>No sets found. Try another search.</Text>
             ) : (
               <View style={isGrid ? styles.grid : styles.list} testID="sets-layout">
                 {data.items.map((set) => <SetCard isGrid={isGrid} key={set.setNumber} set={set} />)}
