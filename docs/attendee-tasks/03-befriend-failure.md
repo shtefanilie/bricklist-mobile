@@ -16,7 +16,7 @@ This makes cards jump around. It also renders the page with a `ScrollView` and `
 3. Install `@legendapp/list` with `npx expo install @legendapp/list`.
 4. Replace the current way we render the list with `LegendList`
 5. Use `numColumns` for grid and list modes, key the list by layout mode, use `keyExtractor` for set numbers, and enable `recycleItems` after removing card-local state.
-6. Using the built in [infinite scrolling](https://www.legendapp.com/open-source/list/v2/examples/infinite-scrolling/) remove the pagination and make the app way smoother.
+6. Use `onEndReached` to request the next API page, append its results, and stop when `page * limit >= total`. Show a Retry action if loading another page fails.
 
 **Stretch goal**
 
@@ -29,9 +29,9 @@ Legend List is written in TypeScript and has no native dependency, so it works i
 - Cards reserve image space before each image response finishes.
 - Images fade in without pushing text or neighboring cards around.
 - Only visible result rows are rendered and recycled by `LegendList`.
-- Grid/list switching, search, pagination, loading, empty, error, and retry still work.
+- Grid/list switching, search, infinite loading, empty, error, and retry still work.
 - Infinite scrolling for endless fun!
 
 ## Helpful prompt
 
-`Replace this ScrollView and map with LegendList while preserving the header, empty state, error state, pagination, and grid toggle. Keep image dimensions stable while requests finish.`
+`Replace this ScrollView and map with LegendList while preserving the header, empty state, error state, search, and grid toggle. Replace Previous and Next with guarded onEndReached loading. Keep image dimensions stable while requests finish.`

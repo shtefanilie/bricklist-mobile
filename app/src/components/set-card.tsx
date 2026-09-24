@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
+import { StyleSheet, Text, View } from 'react-native';
 
 import type { SetRecord } from '@/types';
 
@@ -9,25 +9,15 @@ type SetCardProps = {
 };
 
 export function SetCard({ isGrid, set }: SetCardProps) {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => () => {
-    if (revealTimer.current) clearTimeout(revealTimer.current);
-  }, []);
-
-  function revealImageAfterRandomDelay() {
-    if (revealTimer.current) clearTimeout(revealTimer.current);
-    revealTimer.current = setTimeout(() => setImageLoaded(true), Math.floor(Math.random() * 1001));
-  }
-
   return (
     <View style={[styles.card, isGrid && styles.gridCard]}>
       <Image
         accessibilityLabel={`${set.name} image`}
-        onLoadEnd={revealImageAfterRandomDelay}
+        contentFit="contain"
+        recyclingKey={set.setNumber}
         source={{ uri: set.imageUrl }}
-        style={[styles.image, { height: imageLoaded ? 180 : 0 }]}
+        style={styles.image}
+        transition={200}
       />
       <Text>{set.setNumber}</Text>
       <Text style={styles.name}>{set.name}</Text>
@@ -39,8 +29,8 @@ export function SetCard({ isGrid, set }: SetCardProps) {
 }
 
 const styles = StyleSheet.create({
-  card: { gap: 4, borderColor: '#d1d5db', borderWidth: 1, borderRadius: 8, padding: 12 },
-  gridCard: { width: '48%' },
-  image: { width: '100%', resizeMode: 'contain' },
+  card: { gap: 4, borderColor: '#d1d5db', borderWidth: 1, borderRadius: 8, margin: 6, padding: 12 },
+  gridCard: { flex: 1 },
+  image: { backgroundColor: '#f3f4f6', height: 180, width: '100%' },
   name: { fontWeight: '600' },
 });
