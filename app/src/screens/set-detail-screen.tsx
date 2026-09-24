@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 
 import { fetchSet } from '@/api';
 import type { SetRecord } from '@/types';
@@ -12,6 +12,14 @@ export function SetDetailScreen() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
+
+  async function shareSet(setToShare: SetRecord) {
+    try {
+      await Share.share({ message: `Check out ${setToShare.name} (${setToShare.setNumber}) — ${setToShare.pieceCount} pieces from ${setToShare.theme}!` });
+    } catch {
+      Alert.alert('Could not share set', 'Please try again.');
+    }
+  }
 
   useEffect(() => {
     const controller = new AbortController();
@@ -50,6 +58,7 @@ export function SetDetailScreen() {
             <Text>Theme: {set.theme}</Text>
             <Text>Year: {set.year}</Text>
             <Text>Pieces: {set.pieceCount}</Text>
+            <Button onPress={() => void shareSet(set)} title="Share set" />
           </View>
         )}
       </ScrollView>
