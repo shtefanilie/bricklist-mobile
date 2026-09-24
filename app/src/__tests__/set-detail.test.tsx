@@ -46,7 +46,7 @@ it('shows retry after detail request fails', async () => {
 it('shares selected set details with the device share sheet', async () => {
   fetchSetMock.mockResolvedValue(set);
   const shareSpy = jest.spyOn(Share, 'share').mockResolvedValue({ action: Share.sharedAction });
-  render(<SetDetailScreen />);
+  await render(<SetDetailScreen />);
   await waitFor(() => expect(screen.getByRole('button', { name: 'Share set' })).toBeTruthy());
   fireEvent.press(screen.getByRole('button', { name: 'Share set' }));
   await waitFor(() => expect(shareSpy).toHaveBeenCalledWith({
