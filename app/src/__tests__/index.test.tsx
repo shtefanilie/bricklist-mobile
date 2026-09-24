@@ -52,13 +52,13 @@ describe('HomeScreen', () => {
 
   it('shows loading while the first request is pending', async () => {
     fetchSetsMock.mockReturnValue(new Promise(() => {}));
-    render(<HomeScreen />);
+    await render(<HomeScreen />);
     await waitFor(() => expect(screen.getByText('Loading sets…')).toBeTruthy());
   });
 
   it('renders set fields and reserves image space before it loads', async () => {
     fetchSetsMock.mockResolvedValue(pageOne);
-    render(<HomeScreen />);
+    await render(<HomeScreen />);
     await waitFor(() => expect(screen.getByText('Back to the Future Time Machine')).toBeTruthy());
     expect(screen.getByText('10300-1')).toBeTruthy();
     expect(screen.getByText('LEGO Icons')).toBeTruthy();
@@ -71,7 +71,7 @@ describe('HomeScreen', () => {
 
   it('opens the matching detail route when a set is pressed', async () => {
     fetchSetsMock.mockResolvedValue(pageOne);
-    render(<HomeScreen />);
+    await render(<HomeScreen />);
     await waitFor(() => expect(screen.getByRole('button', { name: 'View Back to the Future Time Machine' })).toBeTruthy());
     fireEvent.press(screen.getByRole('button', { name: 'View Back to the Future Time Machine' }));
     expect(router.push).toHaveBeenCalledWith('/(sets)/10300-1');
@@ -102,7 +102,7 @@ describe('HomeScreen', () => {
 
   it('toggles grid and list layouts', async () => {
     fetchSetsMock.mockResolvedValue(pageOne);
-    render(<HomeScreen />);
+    await render(<HomeScreen />);
     await waitFor(() => expect(screen.getByText('Back to the Future Time Machine')).toBeTruthy());
     expect(screen.getByTestId('sets-layout').props.numColumns).toBe(2);
     await act(async () => fireEvent.press(screen.getByRole('button', { name: 'List view' })));
@@ -112,7 +112,7 @@ describe('HomeScreen', () => {
 
   it('fetches next page once and appends its sets', async () => {
     fetchSetsMock.mockResolvedValueOnce(pageOne).mockResolvedValueOnce(pageTwo);
-    render(<HomeScreen />);
+    await render(<HomeScreen />);
     await waitFor(() => expect(screen.getByText('Back to the Future Time Machine')).toBeTruthy());
     const seed = fetchSetsMock.mock.calls[0][1];
     await act(async () => fireEvent(screen.getByTestId('sets-layout'), 'endReached'));
@@ -125,7 +125,7 @@ describe('HomeScreen', () => {
 
   it('submits a new search from page one after loading more', async () => {
     fetchSetsMock.mockResolvedValueOnce(pageOne).mockResolvedValueOnce(pageTwo).mockResolvedValueOnce({ ...pageOne, total: 1 });
-    render(<HomeScreen />);
+    await render(<HomeScreen />);
     await waitFor(() => expect(screen.getByText('Back to the Future Time Machine')).toBeTruthy());
     const seed = fetchSetsMock.mock.calls[0][1];
     await act(async () => fireEvent(screen.getByTestId('sets-layout'), 'endReached'));
@@ -139,7 +139,7 @@ describe('HomeScreen', () => {
 
   it('retains loaded items and retries a failed next page', async () => {
     fetchSetsMock.mockResolvedValueOnce(pageOne).mockRejectedValueOnce(new Error('Worker unavailable')).mockResolvedValueOnce(pageTwo);
-    render(<HomeScreen />);
+    await render(<HomeScreen />);
     await waitFor(() => expect(screen.getByText('Back to the Future Time Machine')).toBeTruthy());
     await act(async () => fireEvent(screen.getByTestId('sets-layout'), 'endReached'));
     await waitFor(() => expect(screen.getByText('Could not load sets: Worker unavailable')).toBeTruthy());
@@ -150,7 +150,7 @@ describe('HomeScreen', () => {
 
   it('shows an empty message when no sets are returned', async () => {
     fetchSetsMock.mockResolvedValue({ ...pageOne, items: [], total: 0 });
-    render(<HomeScreen />);
+    await render(<HomeScreen />);
     await waitFor(() => expect(screen.getByText('No sets found. Try another search.')).toBeTruthy());
   });
 });
