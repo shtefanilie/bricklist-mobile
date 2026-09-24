@@ -92,7 +92,7 @@ describe('HomeScreen', () => {
 
   it('removes a favourite from a card', async () => {
     fetchSetsMock.mockResolvedValue(pageOne);
-    render(<HomeScreen />);
+    await render(<HomeScreen />);
     await waitFor(() => expect(screen.getByRole('button', { name: 'Add to favourites' })).toBeTruthy());
     fireEvent.press(screen.getByRole('button', { name: 'Add to favourites' }));
     await waitFor(() => expect(screen.getByRole('button', { name: 'Remove from favourites' })).toBeTruthy());

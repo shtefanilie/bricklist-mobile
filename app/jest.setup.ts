@@ -17,7 +17,7 @@ jest.mock('react-native-mmkv', () => {
         listeners.forEach((notify) => notify());
       }] as const;
     },
-    __clear: () => { values.clear(); listeners.forEach((notify) => notify()); },
+    __clear: () => { values.clear(); },
   };
 });
 
