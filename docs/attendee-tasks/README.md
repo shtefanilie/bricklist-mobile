@@ -9,6 +9,7 @@ You have BrickList running. Nice one. Work through these tasks in order with you
 | [3. Smooth out the bricks](03-befriend-failure.md) | Stable image loading and virtualized lists |
 | [4. Open the box](04-new-screen.md) | Nested stacks, dynamic routes, and set details |
 | [5. Cross the native boundary](05-cross-the-native-boundary.md) | Why Expo Go has limits; development builds and one native package |
+| [6. Have fun](06-beyond-scope.md) | Optional experiments with BrickList and other React Native platforms |
 
 Take a break at 1:00. Ask for a helper early if you are blocked for more than five minutes. Getting unstuck is part of the workshop, not a side quest.
 

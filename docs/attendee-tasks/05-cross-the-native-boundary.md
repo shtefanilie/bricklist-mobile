@@ -28,7 +28,7 @@ Build a favourites feature:
 
 **Stretch Goal**
 
-4. Users might want to get to the PDP of a set from the accounts page. How would that work!?
+1. Users might want to get to the PDP of a set from the accounts page. How would that work!?
 
 ## If the selected package is `react-native-vision-camera`
 
