@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "bundleIdentifier": "com.stefanilie.bricklist-workshop"
+  },
+  "android": {
+    "package": "com.stefanilie.bricklistworkshop"
+  }
+}

@@ -17,5 +17,11 @@
   "devDependencies": {
     "@swmansion/argent": "^0.22.1",
     "expo-mcp": "^0.2.4"
+  },
+  "version": "1.0.0",
+  "dependencies": {
+    "expo": "~57.0.24",
+    "react": "19.2.3",
+    "react-native": "0.86.3"
   }
 }
