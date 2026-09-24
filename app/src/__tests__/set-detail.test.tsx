@@ -25,7 +25,7 @@ beforeEach(() => {
 
 it('loads selected set and renders every detail field', async () => {
   fetchSetMock.mockResolvedValue(set);
-  render(<SetDetailScreen />);
+  await render(<SetDetailScreen />);
   await waitFor(() => expect(screen.getByText('Back to the Future Time Machine')).toBeTruthy());
   expect(fetchSetMock).toHaveBeenCalledWith('10300-1', expect.anything());
   expect(screen.getByLabelText('Back to the Future Time Machine image')).toBeTruthy();
@@ -37,7 +37,7 @@ it('loads selected set and renders every detail field', async () => {
 
 it('shows retry after detail request fails', async () => {
   fetchSetMock.mockRejectedValueOnce(new Error('404: Set not found')).mockResolvedValueOnce(set);
-  render(<SetDetailScreen />);
+  await render(<SetDetailScreen />);
   await waitFor(() => expect(screen.getByText('Could not load set: 404: Set not found')).toBeTruthy());
   fireEvent.press(screen.getByRole('button', { name: 'Retry' }));
   await waitFor(() => expect(screen.getByText('Back to the Future Time Machine')).toBeTruthy());
